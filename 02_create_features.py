@@ -417,27 +417,27 @@ labels_ps = ps.DataFrame(labels, columns=schema_).reset_index()
 
 # COMMAND ----------
 
-from databricks import feature_store
-fs = feature_store.FeatureStoreClient()
+from databricks.feature_engineering import FeatureEngineeringClient
+fs = FeatureEngineeringClient()
 
 # COMMAND ----------
 
 # MAGIC %sql
 # MAGIC
 # MAGIC -- Feature Store データベースを作成します
-# MAGIC CREATE DATABASE IF NOT EXISTS feature_store_implied_volatility;
+# MAGIC CREATE SCHEMA IF NOT EXISTS main.feature_store_implied_volatility;
 
 # COMMAND ----------
 
 try:
   fs.drop_table(
-    name="feature_store_implied_volatility.features" # Feature Store テーブルが存在しない場合は ValueError をスローします
+    name="main.feature_store_implied_volatility.features" # Feature Store テーブルが存在しない場合は ValueError をスローします
   )
 except ValueError:
   pass
 
 fs.create_table(
-    name="feature_store_implied_volatility.features",
+    name="main.feature_store_implied_volatility.features",
     primary_keys = ['index'],
     df = features_ps.to_spark(),
     description = 'インプライドボラティリティのフィーチャーセット')
@@ -446,13 +446,13 @@ fs.create_table(
 
 try:
   fs.drop_table(
-    name="feature_store_implied_volatility.labels" # Feature Store テーブルが存在しない場合は ValueError をスローします
+    name="main.feature_store_implied_volatility.labels" # Feature Store テーブルが存在しない場合は ValueError をスローします
   )
 except ValueError:
   pass
 
 fs.create_table(
-    name="feature_store_implied_volatility.labels",
+    name="main.feature_store_implied_volatility.labels",
     primary_keys = ['index'],
     df = labels_ps.to_spark(),
     description = 'インプライドボラティリティのラベルセット')
@@ -467,7 +467,8 @@ fs.create_table(
 
 # MAGIC %sql
 # MAGIC
-# MAGIC use feature_store_implied_volatility
+# MAGIC USE CATALOG main;
+# MAGIC USE SCHEMA feature_store_implied_volatility
 
 # COMMAND ----------
 

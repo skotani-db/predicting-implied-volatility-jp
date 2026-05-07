@@ -1,11 +1,12 @@
 # Databricks notebook source
 import pyspark.pandas as ps
-from databricks import feature_store
+from databricks.feature_engineering import FeatureEngineeringClient
 import mlflow
 import databricks.automl_runtime
 import time
 
 from mlflow.tracking import MlflowClient
+mlflow.set_registry_uri("databricks-uc")
 import os
 import uuid
 import shutil
@@ -18,9 +19,9 @@ import pandas as pd
 
 # COMMAND ----------
 
-fs = feature_store.FeatureStoreClient()
-features_df = fs.read_table('feature_store_implied_volatility.features')
-labels_df = fs.read_table('feature_store_implied_volatility.labels')
+fs = FeatureEngineeringClient()
+features_df = fs.read_table('main.feature_store_implied_volatility.features')
+labels_df = fs.read_table('main.feature_store_implied_volatility.labels')
 
 # COMMAND ----------
 
